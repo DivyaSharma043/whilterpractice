@@ -1,11 +1,15 @@
 package com.whilterAi.services;
 
 import com.whilterAi.entities.Tag;
-import com.whilterAi.repository.TagRepository;
+import com.whilterAi.entities.VideoClip;
+import com.whilterAi.repositories.TagRepository;
+import com.whilterAi.repositories.VideoClipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class TagServices {
@@ -13,52 +17,49 @@ public class TagServices {
     @Autowired
     TagRepository tagRepository;
 
-    // *---------------    Create tag     -----------------*
-    public Tag createTag(Tag tag)
+    @Autowired
+    VideoClipRepository videoClipRepository;
+
+//      *--------------------------CREATE SINGLE TAG-----------------------------*
+
+    public void addSingleTag(Tag tags)
     {
-        return tagRepository.save(tag);
+        tagRepository.save(tags);
     }
 
-    // *---------------    Create List of tag     -----------------*
-    public List<Tag> createTags(List<Tag> tags)
+//      *--------------------------CREATE MULTIPLE TAGS--------------------------*
+
+    public List<Tag> addMultipleTags(List<Tag> tags)
     {
         return (List<Tag>) tagRepository.saveAll(tags);
     }
 
-    // *---------------    Get tag by id    -----------------*
-    public Tag getTagById(long id)
+//      *--------------------------GET TAG BY ID--------------------------------*
+
+    public Optional<Tag> getTagById(long tagId)
     {
-        return tagRepository.findById(id).orElse(null);
+        return tagRepository.findById(tagId);
     }
 
-    // *---------------    Get all tags     -----------------*
+//      *--------------------------GET ALL TAGS-----------------------------*
+
     public List<Tag> getAllTags()
     {
         return (List<Tag>) tagRepository.findAll();
     }
+//      *--------------------------UPDATE TAG-----------------------------*
 
-    // *---------------    Update tag     -----------------*
-    public Tag updateTag(Tag tag)
+    public Tag updateTag(Long tagId, Long videoClipId)
     {
-        Tag oldTag =  null;
-        Optional<Tag> optionalTag= tagRepository.findById(tag.getId());
-        if(optionalTag.isPresent())
-        {
-            oldTag = optionalTag.get();
-            oldTag.setValue(tag.getValue());
-            oldTag.setType(tag.getType());
-            tagRepository.save(oldTag);
-        }
-        else {
-            return new Tag();
-        }
-        return oldTag;
+        Tag tags = tagRepository.findById(tagId).get();
+        VideoClip videoClip = videoClipRepository.findById(videoClipId).get();
+        tags.assignVideoClip(videoClip);
+        return tagRepository.save(tags);
     }
+//      *--------------------------DELETE TAG-----------------------------*
 
-    // *---------------    Delete tag     -----------------*
-    public String deleteTag(long id)
+    public void deleteTag(Long tagId)
     {
-        tagRepository.deleteById(id);
-        return "Tag is deleted";
+        tagRepository.deleteById(tagId);
     }
 }

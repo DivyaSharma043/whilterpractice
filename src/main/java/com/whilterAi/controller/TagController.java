@@ -6,46 +6,59 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class TagController {
 
     @Autowired
-    private TagServices tagServices;
+    TagServices tagServices;
 
-    @PostMapping("/addTag")
-    public Tag addTag(@RequestBody Tag tag)
+//        *--------------------------CREATE SINGLE TAG-----------------------------*
+
+    @PostMapping("/addSingleTag")
+    public void addSingleTag(@RequestBody Tag tags)
     {
-        return tagServices.createTag(tag);
+        tagServices.addSingleTag(tags);
     }
 
-    @PostMapping("/addTags")
-    public List<Tag> addTags(@RequestBody List<Tag> tags)
+//        *--------------------------CREATE MULTIPLE TAGS-----------------------------*
+
+    @PostMapping("/addMultipleTags")
+    public List<Tag> addMultipleTags(@RequestBody List<Tag> tags)
     {
-        return tagServices.createTags(tags);
+        return tagServices.addMultipleTags(tags);
     }
 
-    @GetMapping("/tag/{id}")
-    public Tag getTagById(@PathVariable long id)
+//        *--------------------------GET TAG BY ID-----------------------------*
+
+    @GetMapping("/tags/{tagId}")
+    public Optional<Tag> getTagById(@PathVariable long tagId)
     {
-        return tagServices.getTagById(id);
+        return tagServices.getTagById(tagId);
     }
+
+//        *--------------------------GET ALL TAGS-----------------------------*
 
     @GetMapping("/tags")
     public List<Tag> getAllTags()
     {
-        return tagServices.getAllTags();
+        return (List<Tag>) tagServices.getAllTags();
     }
 
-    @PutMapping("/updateTag")
-    public Tag updateTag(@RequestBody Tag tag)
+//        *--------------------------UPDATE TAG-----------------------------*
+
+    @PutMapping("/tags/{tagId}/videoClips/{videoClipId}")
+    public void updateTag(@PathVariable Long tagId, @PathVariable Long videoClipId)
     {
-        return tagServices.updateTag(tag);
+        tagServices.updateTag(tagId, videoClipId);
     }
 
-    @DeleteMapping("/tag/{id}")
-    public String deleteTag(@PathVariable long id)
+//        *--------------------------DELETE TAG-----------------------------*
+
+    @DeleteMapping("/tags/{tagId}")
+    public void deleteTag(@PathVariable long tagId)
     {
-        return tagServices.deleteTag(id);
+        tagServices.deleteTag(tagId);
     }
 }
